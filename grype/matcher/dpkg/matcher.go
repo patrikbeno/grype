@@ -57,3 +57,5 @@ func (m *Matcher) matchUpstreamPackages(store vulnerability.ProviderByDistro, d 
 
 	return matches, nil
 }
+
+func (m *Matcher) Load(packages []pkg.Package) {}

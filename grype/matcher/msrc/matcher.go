@@ -29,3 +29,5 @@ func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Pa
 	// patch (KB)
 	return search.ByCriteria(store, d, p, m.Type(), search.ByDistro)
 }
+
+func (m *Matcher) Load(packages []pkg.Package) {}

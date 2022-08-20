@@ -21,7 +21,7 @@ type maven struct {
 }
 
 func (cfg externalSources) loadDefaultValues(v *viper.Viper) {
-	v.SetDefault("external-sources.enable", false)
+	v.SetDefault("external-sources.enable", true)
 	v.SetDefault("external-sources.maven.search-maven-upstream", true)
 	v.SetDefault("external-sources.maven.base-url", defaultMavenBaseURL)
 }

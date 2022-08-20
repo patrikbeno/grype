@@ -12,4 +12,5 @@ type Matcher interface {
 	PackageTypes() []syftPkg.Type
 	Type() match.MatcherType
 	Match(vulnerability.Provider, *distro.Distro, pkg.Package) ([]match.Match, error)
+	Load(packages []pkg.Package)
 }

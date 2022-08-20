@@ -3,6 +3,7 @@ package table
 import (
 	"fmt"
 	"io"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -55,7 +56,14 @@ func (pres *Presenter) Present(output io.Writer) error {
 			fixVersion = ""
 		}
 
-		rows = append(rows, []string{m.Package.Name, m.Package.Version, fixVersion, string(m.Package.Type), m.Vulnerability.ID, severity})
+		var name = m.Package.Name
+		if strings.HasPrefix(m.Package.PURL, "pkg:maven/") {
+			name = m.Package.PURL
+			name = strings.Replace(name, "pkg:maven/", "", 1)
+			name = regexp.MustCompile("@.*$").ReplaceAllString(name, "")
+		}
+
+		rows = append(rows, []string{name, m.Package.Version, fixVersion, string(m.Package.Type), m.Vulnerability.ID, severity})
 	}
 
 	if len(rows) == 0 {

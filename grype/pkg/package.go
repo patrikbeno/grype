@@ -73,7 +73,7 @@ func FromCatalog(catalog *pkg.Catalog, config ProviderConfig) []Package {
 		result = append(result, New(p))
 	}
 	if missingCPEs {
-		log.Warnf("some package(s) are missing CPEs. This may result in missing vulnerabilities. You may autogenerate these using: --add-cpes-if-none")
+		//	log.Warnf("some package(s) are missing CPEs. This may result in missing vulnerabilities. You may autogenerate these using: --add-cpes-if-none")
 	}
 	return result
 }

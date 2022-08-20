@@ -166,3 +166,5 @@ func (m *Matcher) matchUpstreamMavenPackages(store vulnerability.Provider, p pkg
 
 	return matches, nil
 }
+
+func (m *Matcher) Load(packages []pkg.Package) {}

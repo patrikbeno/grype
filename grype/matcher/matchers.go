@@ -1,6 +1,7 @@
 package matcher
 
 import (
+	"github.com/anchore/grype/grype/matcher/ossi"
 	"github.com/wagoodman/go-partybus"
 	"github.com/wagoodman/go-progress"
 
@@ -50,6 +51,7 @@ func NewDefaultMatchers(mc Config) []Matcher {
 		&golang.Matcher{},
 		&msrc.Matcher{},
 		&portage.Matcher{},
+		ossi.NewOssiMatcher(),
 	}
 }
 
@@ -99,12 +101,16 @@ func FindMatches(store interface {
 		}
 	}
 
+	for _, m := range matchers {
+		m.Load(packages)
+	}
+
 	packagesProcessed, vulnerabilitiesDiscovered := trackMatcher()
 
 	defaultMatcher := &stock.Matcher{}
 	for _, p := range packages {
 		packagesProcessed.N++
-		log.Debugf("searching for vulnerability matches for pkg=%s", p)
+		log.Debugf("searching for vulnerability matches for %s", p.PURL)
 
 		matchers, ok := matcherIndex[p.Type]
 		if !ok {

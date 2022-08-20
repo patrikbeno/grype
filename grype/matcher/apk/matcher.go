@@ -173,3 +173,5 @@ func (m *Matcher) matchBySourceIndirection(store vulnerability.Provider, d *dist
 
 	return matches, nil
 }
+
+func (m *Matcher) Load(packages []pkg.Package) {}

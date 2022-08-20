@@ -353,6 +353,7 @@ func (c *Curator) activate(dbDirPath string) error {
 // ListingFromURL loads a Listing from a URL.
 func (c Curator) ListingFromURL() (Listing, error) {
 	tempFile, err := afero.TempFile(c.fs, "", "grype-db-listing")
+	err = tempFile.Close()
 	if err != nil {
 		return Listing{}, fmt.Errorf("unable to create listing temp file: %w", err)
 	}

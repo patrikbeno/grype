@@ -147,3 +147,5 @@ func addZeroEpicIfApplicable(version string) string {
 	}
 	return "0:" + version
 }
+
+func (m *Matcher) Load(packages []pkg.Package) {}

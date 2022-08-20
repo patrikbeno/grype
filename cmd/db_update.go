@@ -2,6 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/anchore/grype/grype/matcher/ossi"
+	"github.com/anchore/grype/internal/log"
+	"io/ioutil"
+	"path"
 
 	"github.com/spf13/cobra"
 	"github.com/wagoodman/go-partybus"
@@ -9,7 +13,6 @@ import (
 	"github.com/anchore/grype/grype/db"
 	"github.com/anchore/grype/grype/event"
 	"github.com/anchore/grype/internal/bus"
-	"github.com/anchore/grype/internal/log"
 	"github.com/anchore/grype/internal/ui"
 	"github.com/anchore/stereoscope"
 )
@@ -26,6 +29,9 @@ func init() {
 }
 
 func startDBUpdateCmd() <-chan error {
+
+	runOssiUpdate()
+
 	errs := make(chan error)
 	go func() {
 		defer close(errs)
@@ -69,4 +75,39 @@ func runDBUpdateCmd(_ *cobra.Command, _ []string) error {
 		stereoscope.Cleanup,
 		ui.Select(isVerbose(), appConfig.Quiet, reporter)...,
 	)
+}
+
+func runOssiUpdate() {
+	var coordinates []string
+	dir := path.Join(".workspace", "ossi", "pkg")
+	types, _ := ioutil.ReadDir(dir)
+	for _, t := range types {
+		if !t.IsDir() {
+			continue
+		}
+		namespaces, _ := ioutil.ReadDir(path.Join(dir, t.Name()))
+		for _, ns := range namespaces {
+			if !ns.IsDir() {
+				continue
+			}
+			names, _ := ioutil.ReadDir(path.Join(dir, t.Name(), ns.Name()))
+			for _, n := range names {
+				if !n.IsDir() {
+					continue
+				}
+				versions, _ := ioutil.ReadDir(path.Join(dir, t.Name(), ns.Name(), n.Name()))
+				for _, v := range versions {
+					if !v.IsDir() {
+						continue
+					}
+					//fname := path.Join(dir, t.Name(), ns.Name(), n.Name(), v.Name(), "ossi.json")
+					purl := fmt.Sprintf("pkg:%s/%s/%s@%s", t.Name(), ns.Name(), n.Name(), v.Name())
+					coordinates = append(coordinates, purl)
+				}
+			}
+		}
+	}
+	log.Infof("Found %d cached component reports. Updating all...", len(coordinates))
+	m := ossi.NewOssiMatcher()
+	m.LoadReports(coordinates)
 }

@@ -30,3 +30,5 @@ func (m *Matcher) Match(store vulnerability.Provider, d *distro.Distro, p pkg.Pa
 
 	return matches, nil
 }
+
+func (m *Matcher) Load(packages []pkg.Package) {}
